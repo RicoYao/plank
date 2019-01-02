@@ -52,6 +52,7 @@ prefix func --> (body: () -> [String]) -> String {
     return -->body()
 }
 
+
 // Most of these are derived from https://www.binpress.com/tutorial/objective-c-reserved-keywords/43
 // other language conflicts should be ideally added here.
 // TODO: Find a way to separate this by language since the reserved keywords will differ.
@@ -151,8 +152,14 @@ extension String {
             str = replacementString
         }
 
+        // Replace this with better logic around determining invalid variable names ([a-z|A-Z|_])
         let components = str.components(separatedBy: "_")
-        let name = components.map { return $0.uppercaseFirst }
+        let name = components.map {
+            $0.uppercaseFirst
+              .replacingOccurrences(of: "+", with: "Plus")
+              .replacingOccurrences(of: "%", with: "Percent")
+        }
+
         let formattedName = name.joined(separator: "")
         if objectiveCReservedWords.contains(formattedName) {
             return "\(formattedName)Property"
@@ -184,6 +191,9 @@ extension String {
             } else {
                 name += component.lowercaseFirst
             }
+
+            name = name.replacingOccurrences(of: "+", with: "Plus")
+                       .replacingOccurrences(of: "%", with: "Percent")
         }
 
         if objectiveCReservedWords.contains(name) {
