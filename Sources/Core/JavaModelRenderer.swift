@@ -308,6 +308,8 @@ public struct JavaModelRenderer: JavaFileRenderer {
             [JavaIR.Root.packages(names: [$0])]
         } ?? []
 
+        let nullablityAnnotationPackage = params[.nullabilityAnnotationType] == "androidx" ? "androidx.annotation" : "android.support.annotation"
+
         let imports = [
             JavaIR.Root.imports(names: [
                 "com.google.gson.Gson",
@@ -327,8 +329,8 @@ public struct JavaModelRenderer: JavaFileRenderer {
                 "java.util.Objects",
                 "java.lang.annotation.Retention",
                 "java.lang.annotation.RetentionPolicy",
-                "android.support.annotation.NonNull",
-                "android.support.annotation.Nullable",
+                nullablityAnnotationPackage + ".NonNull",
+                nullablityAnnotationPackage + ".Nullable",
             ]),
         ]
 
