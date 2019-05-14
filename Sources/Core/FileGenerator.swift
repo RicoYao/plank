@@ -20,6 +20,8 @@ public enum GenerationParameterType {
     case indent
     case packageName
     case nullabilityAnnotationType
+    case extends
+    case implements
 }
 
 // Most of these are derived from https://www.binpress.com/tutorial/objective-c-reserved-keywords/43
