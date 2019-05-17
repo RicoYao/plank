@@ -20,6 +20,7 @@ enum FlagOptions: String {
     case javaNullabilityAnnotationType = "java_nullability_annotation_type"
     case javaExtends = "java_extends"
     case javaImplements = "java_implements"
+    case javaAnnotations = "java_annotations"
     case printDeps = "print_deps"
     case noRecursive = "no_recursive"
     case noRuntime = "no_runtime"
@@ -45,6 +46,7 @@ enum FlagOptions: String {
         case .javaNullabilityAnnotationType: return true
         case .javaExtends: return true
         case .javaImplements: return true
+        case .javaAnnotations: return true
         }
     }
 }
@@ -70,6 +72,7 @@ extension FlagOptions: HelpCommandOutput {
             "    --\(FlagOptions.javaNullabilityAnnotationType.rawValue) - The type of nullability annotations to use. Can be either \"android-support\" (default) or \"androidx\".",
             "    --\(FlagOptions.javaExtends.rawValue) - The class that the model extends",
             "    --\(FlagOptions.javaImplements.rawValue) - The interface(s) that the model implements. If there are multiple interfaces, separate with commas.",
+            "    --\(FlagOptions.javaAnnotations.rawValue) - Custom annotations to apply to the generated Java model.",
         ].joined(separator: "\n")
     }
 }
@@ -156,6 +159,7 @@ func handleGenerateCommand(withArguments arguments: [String]) {
     let javaNullabilityAnnotationType: String? = flags[.javaNullabilityAnnotationType]
     let javaExtends: String? = flags[.javaExtends]
     let javaImplements: String? = flags[.javaImplements]
+    let javaAnnotations: String? = flags[.javaAnnotations]
 
     let generationParameters: GenerationParameters = [
         (.recursive, recursive),
@@ -166,6 +170,7 @@ func handleGenerateCommand(withArguments arguments: [String]) {
         (.javaNullabilityAnnotationType, javaNullabilityAnnotationType),
         (.javaExtends, javaExtends),
         (.javaImplements, javaImplements),
+        (.javaAnnotations, javaAnnotations),
     ].reduce([:]) { (dict: GenerationParameters, tuple: (GenerationParameterType, String?)) in
         var mutableDict = dict
         if let val = tuple.1 {
