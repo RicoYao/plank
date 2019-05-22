@@ -21,6 +21,7 @@ enum FlagOptions: String {
     case javaExtends = "java_extends"
     case javaImplements = "java_implements"
     case javaAnnotations = "java_annotations"
+    case javaGeneratePackagePrivateSetters = "java_generate_package_private_setters"
     case printDeps = "print_deps"
     case noRecursive = "no_recursive"
     case noRuntime = "no_runtime"
@@ -47,6 +48,7 @@ enum FlagOptions: String {
         case .javaExtends: return true
         case .javaImplements: return true
         case .javaAnnotations: return true
+        case .javaGeneratePackagePrivateSetters: return false
         }
     }
 }
@@ -73,6 +75,7 @@ extension FlagOptions: HelpCommandOutput {
             "    --\(FlagOptions.javaExtends.rawValue) - The class that the model extends",
             "    --\(FlagOptions.javaImplements.rawValue) - The interface(s) that the model implements. If there are multiple interfaces, separate with commas.",
             "    --\(FlagOptions.javaAnnotations.rawValue) - Custom annotations to apply to the generated Java model.",
+            "    --\(FlagOptions.javaGeneratePackagePrivateSetters.rawValue) - Generate package-private setter methods",
         ].joined(separator: "\n")
     }
 }
@@ -160,6 +163,7 @@ func handleGenerateCommand(withArguments arguments: [String]) {
     let javaExtends: String? = flags[.javaExtends]
     let javaImplements: String? = flags[.javaImplements]
     let javaAnnotations: String? = flags[.javaAnnotations]
+    let javaGeneratePackagePrivateSetters: String? = (flags[.javaGeneratePackagePrivateSetters] == nil) ? .none : .some("")
 
     let generationParameters: GenerationParameters = [
         (.recursive, recursive),
@@ -171,6 +175,7 @@ func handleGenerateCommand(withArguments arguments: [String]) {
         (.javaExtends, javaExtends),
         (.javaImplements, javaImplements),
         (.javaAnnotations, javaAnnotations),
+        (.javaGeneratePackagePrivateSetters, javaGeneratePackagePrivateSetters),
     ].reduce([:]) { (dict: GenerationParameters, tuple: (GenerationParameterType, String?)) in
         var mutableDict = dict
         if let val = tuple.1 {
