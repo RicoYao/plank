@@ -14,6 +14,7 @@ struct JavaModifier: OptionSet {
     static let final = JavaModifier(rawValue: 1 << 2)
     static let `static` = JavaModifier(rawValue: 1 << 3)
     static let `private` = JavaModifier(rawValue: 1 << 4)
+    static let transient = JavaModifier(rawValue: 1 << 5)
 
     func render() -> String {
         return [
@@ -22,6 +23,7 @@ struct JavaModifier: OptionSet {
             self.contains(.static) ? "static" : "",
             self.contains(.final) ? "final" : "",
             self.contains(.private) ? "private" : "",
+            self.contains(.transient) ? "transient" : "",
         ].filter { $0 != "" }.joined(separator: " ")
     }
 }
@@ -71,12 +73,14 @@ struct JavaCustomAnnotations: Codable {
     var constructor: [String] { return internalConstructor ?? [] }
     var properties: [String: [String: [String]]] { return internalProperties ?? [:] }
     var methods: [String: [String]] { return internalMethods ?? [:] }
+    var variables: [String: [String]] { return internalVariables ?? [:] }
     var imports: [String] { return internalImports ?? [] }
 
     private var internalClass: [String]?
     private var internalConstructor: [String]?
     private var internalProperties: [String: [String: [String]]]?
     private var internalMethods: [String: [String]]?
+    private var internalVariables: [String: [String]]?
     private var internalImports: [String]?
 
     enum CodingKeys: String, CodingKey {
@@ -84,6 +88,7 @@ struct JavaCustomAnnotations: Codable {
         case internalConstructor = "constructor"
         case internalProperties = "properties"
         case internalMethods = "methods"
+        case internalVariables = "variables"
         case internalImports = "imports"
     }
 
@@ -128,6 +133,15 @@ struct JavaCustomAnnotations: Codable {
             return []
         }
         return Set(methodAnnotations.map { annotationString in
+            JavaAnnotation.custom(annotationString)
+        })
+    }
+    
+    func forVariable(_ variable: String) -> Set<JavaAnnotation> {
+        guard let variableAnnotations = variables[variable] else {
+            return []
+        }
+        return Set(variableAnnotations.map { annotationString in
             JavaAnnotation.custom(annotationString)
         })
     }
