@@ -138,6 +138,9 @@ public struct JavaModelRenderer: JavaFileRenderer {
 
         let setters = transitiveProperties.map { param, schemaObj in
             JavaIR.method([], "void set\(Languages.java.snakeCaseToCapitalizedPropertyName(param))(\(self.typeFromSchema(param, schemaObj)) value)") { [
+                JavaIR.ifBlock(condition: "this._bits.length > " + param.uppercased() + "_INDEX") { [
+                    "this._bits[" + param.uppercased() + "_INDEX] = true;",
+                    ] },
                 "this." + Languages.java.snakeCaseToPropertyName(param) + " = value;",
             ] }
         }
